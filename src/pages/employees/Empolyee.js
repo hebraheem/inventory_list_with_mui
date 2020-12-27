@@ -49,10 +49,10 @@ function Empolyee() {
     let target = e.target;
     setSearch({
       fn: items=> {
-        if(target.value=''){
+        if(target.value==''){
           return items;
         } else {
-          return items.filter(item => item.fullName.toLowerCase().includes(target.value))
+          return items.filter(x => x.fullname.includes(target.value.toLowerCase()))
         }
       }
     })

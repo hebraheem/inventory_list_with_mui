@@ -65,7 +65,7 @@ function useTable(records, HeadCells, search) {
                   onClick={() => handleSortRequest(cells.id)}
                 >
                   {cells.label}
-                </TableSortLabel>{" "}
+                </TableSortLabel>
               </TableCell>
             );
           })}
