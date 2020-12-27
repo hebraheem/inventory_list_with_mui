@@ -36,7 +36,7 @@ function EmployeeForm() {
 
       setErrors({...temp})
 
-      return Object.values(temp).every(x => x == "")
+      return Object.values(temp).every(x => x === "")
     }
 
     const handleSubmit =(e)=>{

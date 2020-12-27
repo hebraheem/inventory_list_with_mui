@@ -18,16 +18,13 @@ export const insertEmployee =(data)=>{
   employees.push(data)
   localStorage.setItem(KEY.employee, JSON.stringify(employees))
 }
-// export const generateEmployeeId = () => {
-//   if (localStorage.getItem(KEY.employee) == null)
-//     localStorage.setItem(KEY.employee, "0");
-//   let id = parseInt(localStorage.getItem(KEY.employeeId))
-//   localStorage.setItem(KEY.employeeId, (++id).toString())
-//   return id
-// };
 
 export const getEmployee =()=>{
  if(localStorage.getItem(KEY.employee)== null)
     localStorage.setItem(KEY.employee, JSON.stringify([]))
-  return JSON.parse(localStorage.getItem(KEY.employee));
+  let epmloyeeDepartment = JSON.parse(localStorage.getItem(KEY.employee));
+  let departments = getDepartment();
+  return epmloyeeDepartment.map(dept =>{
+    return ({...dept, department: departments[dept.departmentId - 1].title})
+  })
 }
