@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function useTable(records, HeadCells) {
+function useTable(records, HeadCells, search) {
   const classes = useStyles();
   //PAGINATION STATE
   const [page, setPage] = useState(0);
@@ -45,8 +45,8 @@ function useTable(records, HeadCells) {
 
   const TblHead = () => {
     const handleSortRequest = (cellId) => {
-      const isAsc = orderBy === cellId && orderBy === "asc";
-      SetOrder(isAsc ? "des" : "asc");
+      const isAsc = orderBy === cellId && order === "asc";
+      SetOrder(isAsc ? "desc" : "asc");
       setOrderBy(cellId);
     };
 
@@ -55,7 +55,10 @@ function useTable(records, HeadCells) {
         <TableRow>
           {HeadCells.map((cells) => {
             return (
-              <TableCell key={cells.id}>
+              <TableCell
+                key={cells.id}
+                sortDirection={orderBy === cells.id ? order : false}
+              >
                 <TableSortLabel
                   active={orderBy === cells.id}
                   direction={orderBy === cells.id ? order : "asc"}
@@ -118,7 +121,7 @@ function useTable(records, HeadCells) {
   }
 
   const setRowRecordAndSorting = () => {
-    return stableSort(records, getComparator(order, orderBy)).slice(
+    return stableSort(search.fn(records), getComparator(order, orderBy)).slice(
       page * rowsPerPage,
       (page + 1) * rowsPerPage
     );

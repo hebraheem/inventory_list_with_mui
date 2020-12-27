@@ -2,16 +2,28 @@ import React, { useState } from "react";
 import PageHeader from "../../PageHeader";
 import EmployeeForm from "./EmployeeForm";
 import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
-import { Paper, TableBody, TableCell, TableRow } from "@material-ui/core";
+import {
+  Paper,
+  TableBody,
+  Toolbar,
+  TableCell,
+  TableRow,
+  InputAdornment,
+} from "@material-ui/core";
+import { Search } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import useTable from "../../useTable";
-import * as employeeService from '../../services/employeeData'
+import Controls from "../../controls/Controls";
+import * as employeeService from "../../services/employeeData";
 
 const useStyles = makeStyles({
   pageContent: {
     margin: "40px",
     padding: "24px",
   },
+  searchInput:{
+    width: "75%",
+  }
 });
 
 const HeadCells = [
@@ -22,11 +34,30 @@ const HeadCells = [
 ];
 
 function Empolyee() {
-
   const [records, setRecords] = useState(employeeService.getEmployee());
-  const { TblContainer, TblHead, setRowRecordAndSorting, TblPagination } = useTable(records, HeadCells);
+  const [search, setSearch] = useState({fn:items=> {return items}})
+  const {
+    TblContainer,
+    TblHead,
+    setRowRecordAndSorting,
+    TblPagination,
+  } = useTable(records, HeadCells, search);
 
   const classes = useStyles();
+
+  const handleSearch =(e)=>{
+    let target = e.target;
+    setSearch({
+      fn: items=> {
+        if(target.value=''){
+          return items;
+        } else {
+          return items.filter(item => item.fullName.toLowerCase().includes(target.value))
+        }
+      }
+    })
+  }
+
   return (
     <div>
       <PageHeader
@@ -36,6 +67,17 @@ function Empolyee() {
       />
       <Paper className={classes.pageContent}>
         {/* <EmployeeForm /> */}
+        <Toolbar>
+          <Controls.Input className={classes.searchInput}
+            label="Search Employee"
+            onChange={handleSearch}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">{<Search />}</InputAdornment>
+              ),
+            }}
+          />
+        </Toolbar>
         <TblContainer>
           <TblHead />
           <TableBody>
