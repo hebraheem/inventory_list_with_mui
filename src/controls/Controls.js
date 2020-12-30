@@ -4,6 +4,7 @@ import Select from "./Select";
 import Checkbox from "./Checkbox";
 import Datepicker from "./Datepicker";
 import Button from "./Button";
+import ActionButton from './ActionButton'
 
 const Controls = {
   Input,
@@ -12,6 +13,7 @@ const Controls = {
   Checkbox,
   Datepicker,
   Button,
+  ActionButton,
 }; 
 
 export default Controls

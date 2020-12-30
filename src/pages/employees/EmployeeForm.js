@@ -17,34 +17,42 @@ const initialValues = {
   isPermanent: false,
 };
 
-function EmployeeForm() {
+function EmployeeForm({ addOrEddit, edit }) {
   const genderItems = [
     { id: "male", title: "Male" },
     { id: "female", title: "Female" },
     { id: "other", title: "Other" },
   ];
 
-  const { values, setValues,resetFunction, handleChange, errors, setErrors } = useForm(initialValues);
+  const {
+    values,
+    setValues,
+    resetFunction,
+    handleChange,
+    errors,
+    setErrors,
+  } = useForm(initialValues);
 
-  const validate = () =>{
-      let temp ={}
-      temp.fullname = values.fullname ? "" : "This field is required."
-      temp.email = (/$^|.+@.+..+/).test(values.email) ? "" : "Enter a valid email."
-      temp.mobile = values.mobile.length>9 ? "" : "Minimum ten numbers required."
-      temp.city = values.city ? "" : "This field is required."
-      temp.departmentId = values.departmentId? "" : "This field is required."
+  const validate = () => {
+    let temp = {};
+    temp.fullname = values.fullname ? "" : "This field is required.";
+    temp.email = /$^|.+@.+..+/.test(values.email) ? "" : "Enter a valid email.";
+    temp.mobile =
+      values.mobile.length > 9 ? "" : "Minimum ten numbers required.";
+    temp.city = values.city ? "" : "This field is required.";
+    temp.departmentId = values.departmentId ? "" : "This field is required.";
 
-      setErrors({...temp})
+    setErrors({ ...temp });
 
-      return Object.values(temp).every(x => x === "")
+    return Object.values(temp).every((x) => x === "");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      addOrEddit(values)
     }
-
-    const handleSubmit =(e)=>{
-        e.preventDefault()
-        if(validate()){
-          employeeService.insertEmployee(values)
-      }
-    }
+  };
 
   return (
     <Form onSubmit={handleSubmit}>

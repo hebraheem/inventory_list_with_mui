@@ -73,7 +73,7 @@ function useTable(records, HeadCells, search) {
       </TableHead>
     );
   };
-
+ 
   const handleChange = (event, newPage) => {
     setPage(newPage);
   };

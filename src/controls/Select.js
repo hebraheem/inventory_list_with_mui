@@ -7,10 +7,9 @@ import {
 } from "@material-ui/core";
 import React from "react";
 
-function Select({ name, label, value, error=null, onChange, options }) {
+function Select({ name, label, value, error = null, onChange, options }) {
   return (
-    <FormControl variant="outlined"
-    {...(error && {error: true})}>
+    <FormControl variant="outlined" {...(error && { error: true })}>
       <InputLabel>{label}</InputLabel>
       <MuiSelect name={name} value={value} label={label} onChange={onChange}>
         <MenuItem value="">None </MenuItem>
