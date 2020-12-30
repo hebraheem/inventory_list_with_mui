@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PageHeader from "../../PageHeader";
 import EmployeeForm from "./EmployeeForm";
+import ConfirmDialog from "../../ConfirmDialog";
 import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
 import {
   Paper,
@@ -19,6 +20,7 @@ import * as employeeService from "../../services/employeeData";
 import Popup from "../../Popup";
 import CloseIcon from "@material-ui/icons/Close";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
+import Notification from "../../Notification";
 
 const useStyles = makeStyles({
   pageContent: {
@@ -50,8 +52,21 @@ function Empolyee() {
   //for popup Dialog
   const [openPopup, setOpenPopup] = useState(false);
 
-  //stete for edit
-  const [edit, setEdit]= useState(null)
+  //state for edit
+  const [edit, setEdit] = useState(null);
+  //confirm dialog
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+  });
+
+  //snacbar and alert
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
 
   const {
     TblContainer,
@@ -78,16 +93,31 @@ function Empolyee() {
   };
 
   const addOrEddit = (employee, resetForm) => {
-    employeeService.insertEmployee(employee);
+    if (employee.id === 0) employeeService.insertEmployee(employee);
+    else employeeService.updateEmployee(employee);
     setOpenPopup(false);
+    setEdit(null);
     //to imediately update the table
     setRecords(employeeService.getEmployee());
+    setNotify({ isOpen: true, message: "Added Successfully", type: "success" });
   };
 
-  const openInPopup=(record)=>{
-    setEdit(record)
-    setOpenPopup(true)
-  }
+  //open dialog for edit function
+  const openInPopup = (record) => {
+    setEdit(record);
+    setOpenPopup(true);
+  };
+  // delete employee coming from employeedata.js
+  const handleDelete = (id) => {
+    setConfirmDialog({...confirmDialog, isOpen: false})
+    employeeService.deleteEmployee(id);
+    setRecords(employeeService.getEmployee());
+    setNotify({
+      isOpen: true,
+      message: "Deleted Successfully",
+      type: "error",
+    });
+  };
 
   return (
     <div>
@@ -114,20 +144,17 @@ function Empolyee() {
             text="Add New"
             variant="outlined"
             startIcon={<AddIcon />}
-            onClick={() => setOpenPopup(true)}
+            onClick={() => {
+              setOpenPopup(true);
+              setEdit(null);
+            }}
           />
         </Toolbar>
         <TblContainer>
           <TblHead />
           <TableBody>
             {setRowRecordAndSorting().map((record) => {
-              const {
-                fullname,
-                email,
-                mobile,
-                department,
-                id,
-              } = record;
+              const { fullname, email, mobile, department, id } = record;
               return (
                 <TableRow key={id}>
                   <TableCell>{fullname}</TableCell>
@@ -135,10 +162,27 @@ function Empolyee() {
                   <TableCell>{mobile}</TableCell>
                   <TableCell>{department}</TableCell>
                   <TableCell>
-                    <Controls.ActionButton color="primary" onClick={()=>{openInPopup(record)}}>
+                    <Controls.ActionButton
+                      color="primary"
+                      onClick={() => {
+                        openInPopup(record);
+                      }}
+                    >
                       <EditOutlinedIcon fontSize="small" />
                     </Controls.ActionButton>
-                    <Controls.ActionButton color="secondary">
+                    <Controls.ActionButton
+                      color="secondary"
+                      onClick={() => {
+                        setConfirmDialog({
+                          isOpen: true,
+                          title: "Are you sure about this action",
+                          subtitle: "This action can not be undone",
+                          onConfirm: () => {
+                            handleDelete(id);
+                          },
+                        });
+                      }}
+                    >
                       <CloseIcon fontSize="small" />
                     </Controls.ActionButton>
                   </TableCell>
@@ -154,8 +198,13 @@ function Empolyee() {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <EmployeeForm addOrEddit={addOrEddit} />
+        <EmployeeForm addOrEddit={addOrEddit} edit={edit} />
       </Popup>
+      <Notification notify={notify} setNotify={setNotify} />
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
     </div>
   );
 }

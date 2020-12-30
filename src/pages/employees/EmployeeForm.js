@@ -53,6 +53,15 @@ function EmployeeForm({ addOrEddit, edit }) {
       addOrEddit(values)
     }
   };
+  
+  // for edit function
+  useEffect(()=>{
+    if(edit != null){
+      setValues({
+        ...edit
+      })
+    }
+  },[edit])
 
   return (
     <Form onSubmit={handleSubmit}>
